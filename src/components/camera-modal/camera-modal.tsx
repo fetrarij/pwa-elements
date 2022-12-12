@@ -7,9 +7,13 @@ import { h, Event, EventEmitter, Component, Method, Prop } from '@stencil/core';
 })
 export class PWACameraModal {
   @Prop() facingMode: string = 'user';
+  @Prop() emballageImage;
 
   @Event() onPhoto: EventEmitter;
   @Event() noDeviceError: EventEmitter;
+  @Event() onRotate: EventEmitter;
+  @Event() onCapture: EventEmitter;
+
 
   _modal: HTMLElement;
 
@@ -17,6 +21,7 @@ export class PWACameraModal {
   async present() {
     const camera = document.createElement('pwa-camera-modal-instance');
     camera.facingMode = this.facingMode;
+    camera.emballageImage = this.emballageImage;
 
     camera.addEventListener('onPhoto', async (e: any) => {
       if (!this._modal) {
@@ -28,6 +33,13 @@ export class PWACameraModal {
 
     camera.addEventListener('noDeviceError', async (e: any) => {
       this.noDeviceError.emit(e);
+    });
+
+    camera.addEventListener('onRotate', async (e: any) => {
+      this.onRotate.emit(e);
+    });
+    camera.addEventListener('onCapture', async (e: any) => {
+      this.onCapture.emit(e);
     });
 
     document.body.append(camera);

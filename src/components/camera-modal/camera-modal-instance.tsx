@@ -12,6 +12,7 @@ export class PWACameraModal {
   @Prop() facingMode: string = 'user';
   @Prop() noDevicesText = 'No camera found';
   @Prop() noDevicesButtonText = 'Choose image';
+  @Prop() emballageImage;
 
   handlePhoto = async (photo: Blob) => {
     this.onPhoto.emit(photo);
@@ -19,6 +20,14 @@ export class PWACameraModal {
 
   handleNoDeviceError = async (photo: any) => {
     this.noDeviceError.emit(photo);
+  }
+
+  handleOnRotate = () => {
+    this.el.rotate();
+  }
+
+  handleOnCapture = () => {
+    this.el.capture();
   }
 
   handleBackdropClick(e: MouseEvent) {
@@ -43,9 +52,12 @@ export class PWACameraModal {
       <div class="wrapper" onClick={e => this.handleBackdropClick(e)}>
         <div class="content">
           <pwa-camera
+            emballageImage={this.emballageImage}
             onClick={e => this.handleComponentClick(e)}
             facingMode={this.facingMode}
             handlePhoto={this.handlePhoto}
+            handleOnRotate={this.handleOnRotate}
+            handleOnCapture={this.handleOnCapture}
             handleNoDeviceError={this.handleNoDeviceError}
             noDevicesButtonText={this.noDevicesButtonText}
             noDevicesText={this.noDevicesText} />

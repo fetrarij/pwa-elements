@@ -21,8 +21,12 @@ export class CameraPWA {
 
   @Prop() handlePhoto: (photo: Blob) => void;
   @Prop() handleNoDeviceError: (e?: any) => void;
+  @Prop() handleOnCapture: (e?: any) => void;
+  @Prop() handleOnRotate: (e?: any) => void;
   @Prop() noDevicesText = 'No camera found';
   @Prop() noDevicesButtonText = 'Choose image';
+  @Prop() emballageImage;
+  
 
   @State() photo: any;
   @State() photoSrc: any;
@@ -31,6 +35,7 @@ export class CameraPWA {
   @State() hasCamera: boolean | null = null;
   @State() rotation = 0;
   @State() deviceError: any | null = null;
+  @State() cameraHeight = 0;
 
   // The orientation of the current photo
   photoOrientation: number;
@@ -56,12 +61,14 @@ export class CameraPWA {
   flashModes: FlashMode[] = [];
   // Current flash mode
   flashMode: FlashMode = 'off';
+  element: HTMLElement;
 
   async componentDidLoad() {
     if (this.isServer) {
       return;
     }
 
+    console.log('qsdqs a', this.emballageImage)
     this.defaultConstraints = {
       video: {
         facingMode: this.facingMode
@@ -73,6 +80,9 @@ export class CameraPWA {
 
     // Initialize the camera
     await this.initCamera();
+
+    this.cameraHeight = this.element.offsetHeight - 100
+    console.log('camera height', this.cameraHeight)
   }
 
   componentDidUnload() {
@@ -369,17 +379,21 @@ export class CameraPWA {
       <svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'><path d='M450.29,112H142c-34,0-62,27.51-62,61.33V418.67C80,452.49,108,480,142,480H450c34,0,62-26.18,62-60V173.33C512,139.51,484.32,112,450.29,112Zm-77.15,61.34a46,46,0,1,1-46.28,46A46.19,46.19,0,0,1,373.14,173.33Zm-231.55,276c-17,0-29.86-13.75-29.86-30.66V353.85l90.46-80.79a46.54,46.54,0,0,1,63.44,1.83L328.27,337l-113,112.33ZM480,418.67a30.67,30.67,0,0,1-30.71,30.66H259L376.08,333a46.24,46.24,0,0,1,59.44-.16L480,370.59Z'/><path d='M384,32H64A64,64,0,0,0,0,96V352a64.11,64.11,0,0,0,48,62V152a72,72,0,0,1,72-72H446A64.11,64.11,0,0,0,384,32Z'/></svg>
     );
   }
+  
+  iconCapture() {
+    return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70' viewBox='0 0 70 70' fill='none'%3E%3Ccircle cx='35' cy='35' r='34.5' fill='%23CA3C66' stroke='%23CA3C66'/%3E%3Ccircle cx='35' cy='35' r='28' fill='%23CA3C66' stroke='%23F9FBFC' stroke-width='2'/%3E%3C/svg%3E`;
+  }
 
   iconConfirm() {
     return `data:image/svg+xml,%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 512 512' enable-background='new 0 0 512 512' xml:space='preserve'%3E%3Ccircle fill='%232CD865' cx='256' cy='256' r='256'/%3E%3Cg id='Icon_1_'%3E%3Cg%3E%3Cg%3E%3Cpath fill='%23FFFFFF' d='M208,301.4l-55.4-55.5c-1.5-1.5-4-1.6-5.6-0.1l-23.4,22.3c-1.6,1.6-1.7,4.1-0.1,5.7l81.6,81.4 c3.1,3.1,8.2,3.1,11.3,0l171.8-171.7c1.6-1.6,1.6-4.2-0.1-5.7l-23.4-22.3c-1.6-1.5-4.1-1.5-5.6,0.1L213.7,301.4 C212.1,303,209.6,303,208,301.4z'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E`;
   }
 
   iconReverseCamera() {
-    return `data:image/svg+xml,%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 512 512' enable-background='new 0 0 512 512' xml:space='preserve'%3E%3Cg%3E%3Cpath fill='%23FFFFFF' d='M352,0H160C72,0,0,72,0,160v192c0,88,72,160,160,160h192c88,0,160-72,160-160V160C512,72,440,0,352,0z M356.7,365.8l-3.7,3.3c-27,23.2-61.4,35.9-96.8,35.9c-72.4,0-135.8-54.7-147-125.6c-0.3-1.9-2-3.3-3.9-3.3H64 c-3.3,0-5.2-3.8-3.2-6.4l61.1-81.4c1.6-2.1,4.7-2.1,6.4-0.1l63.3,81.4c2,2.6,0.2,6.5-3.2,6.5h-40.6c-2.5,0-4.5,2.4-3.9,4.8 c11.5,51.5,59.2,90.6,112.4,90.6c26.4,0,51.8-9.7,73.7-27.9l3.1-2.5c1.6-1.3,3.9-1.1,5.3,0.3l18.5,18.6 C358.5,361.6,358.4,364.3,356.7,365.8z M451.4,245.6l-61,83.5c-1.6,2.2-4.8,2.2-6.4,0.1l-63.3-83.3c-2-2.6-0.1-6.4,3.2-6.4h40.8 c2.5,0,4.4-2.3,3.9-4.8c-5.1-24.2-17.8-46.5-36.5-63.7c-21.2-19.4-48.2-30.1-76-30.1c-26.5,0-52.6,9.7-73.7,27.3l-3.1,2.5 c-1.6,1.3-3.9,1.2-5.4-0.3l-18.5-18.5c-1.6-1.6-1.5-4.3,0.2-5.9l3.5-3.1c27-23.2,61.4-35.9,96.8-35.9c38,0,73.9,13.7,101.2,38.7 c23.2,21.1,40.3,55.2,45.7,90.1c0.3,1.9,1.9,3.4,3.9,3.4h41.3C451.4,239.2,453.3,243,451.4,245.6z'/%3E%3C/g%3E%3C/svg%3E`;
+    return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='42' viewBox='0 0 40 42' fill='none'%3E%3Cpath d='M37.0203 21.9334C36.7593 21.7177 36.4234 21.6162 36.0875 21.6521C35.7515 21.6896 35.4453 21.8599 35.2375 22.1271C35.0296 22.3927 34.939 22.7318 34.9843 23.0662C35.0312 23.4006 35.2109 23.7021 35.4828 23.9021C36.6219 24.6568 37.3625 25.8834 37.5 27.2428C37.5 30.6584 31.5376 33.81 23.6296 34.5724C22.9389 34.6052 22.4061 35.1911 22.4389 35.8817C22.4717 36.5724 23.0577 37.1052 23.7467 37.0724H23.8686C33.367 36.1458 39.9998 32.1052 39.9998 27.2428C39.8998 25.1021 38.7951 23.1336 37.0201 21.9336L37.0203 21.9334Z' fill='%23CA3C66'/%3E%3Cpath d='M21.1551 35.5145C21.0926 35.363 21.0004 35.2239 20.8832 35.1083L17.1332 31.3583C16.6425 30.8833 15.8629 30.8911 15.3801 31.3724C14.8988 31.8552 14.891 32.6348 15.366 33.1255L16.8457 34.6052C8.25047 33.902 2.50047 30.4144 2.50047 27.2428C2.63797 25.8834 3.38015 24.6568 4.52079 23.9021C5.04111 23.4709 5.12547 22.7037 4.70829 22.1709C4.29265 21.6381 3.52861 21.5318 2.98329 21.9334C1.20673 23.1334 0.100488 25.1006 0.000488281 27.2426C0.000488281 32.355 7.30969 36.4458 17.0957 37.1302L15.3676 38.8583C15.1269 39.0911 14.9894 39.4114 14.9863 39.7458C14.9832 40.0818 15.116 40.4036 15.3519 40.6411C15.5894 40.8771 15.9113 41.0099 16.2473 41.0068C16.5816 41.0036 16.9019 40.8661 17.1348 40.6255L20.8848 36.8755C21.2442 36.5177 21.3504 35.9802 21.1582 35.513L21.1551 35.5145Z' fill='%23CA3C66'/%3E%3Cpath d='M32.5 29.5895V3.49268C32.5 2.8302 32.2359 2.19424 31.7672 1.72548C31.2985 1.25672 30.6625 0.992676 30 0.992676H10C8.61876 0.992676 7.5 2.11144 7.5 3.49268V29.5599C9.09688 30.424 10.8094 31.0568 12.5844 31.4396C12.8781 30.102 13.8797 29.0302 15.1953 28.6442C16.511 28.2599 17.9312 28.6239 18.9 29.5927L21.8828 32.5755C22.3406 32.3036 22.8531 32.1317 23.3828 32.0755C26.5547 31.852 29.6532 31.0083 32.5 29.5896V29.5895ZM20 10.9927H15C13.6188 10.9927 12.5 9.87392 12.5 8.49268C12.5 7.11144 13.6188 5.99268 15 5.99268H20C21.3812 5.99268 22.5 7.11144 22.5 8.49268C22.5 9.87392 21.3812 10.9927 20 10.9927Z' fill='%23CA3C66'/%3E%3C/svg%3E`;
   }
 
   iconRetake() {
-    return `data:image/svg+xml,%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 512 512' enable-background='new 0 0 512 512' xml:space='preserve'%3E%3Ccircle fill='%23727A87' cx='256' cy='256' r='256'/%3E%3Cg id='Icon_5_'%3E%3Cg%3E%3Cpath fill='%23FFFFFF' d='M394.2,142L370,117.8c-1.6-1.6-4.1-1.6-5.7,0L258.8,223.4c-1.6,1.6-4.1,1.6-5.7,0L147.6,117.8 c-1.6-1.6-4.1-1.6-5.7,0L117.8,142c-1.6,1.6-1.6,4.1,0,5.7l105.5,105.5c1.6,1.6,1.6,4.1,0,5.7L117.8,364.4c-1.6,1.6-1.6,4.1,0,5.7 l24.1,24.1c1.6,1.6,4.1,1.6,5.7,0l105.5-105.5c1.6-1.6,4.1-1.6,5.7,0l105.5,105.5c1.6,1.6,4.1,1.6,5.7,0l24.1-24.1 c1.6-1.6,1.6-4.1,0-5.7L288.6,258.8c-1.6-1.6-1.6-4.1,0-5.7l105.5-105.5C395.7,146.1,395.7,143.5,394.2,142z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E`;
+    return ``;
   }
 
   iconFlashOff() {
@@ -401,23 +415,6 @@ export class CameraPWA {
 
     return (
       <div class="camera-wrapper">
-        <div class="camera-header">
-          <section class="items">
-            <div class="item close" onClick={e => this.handleClose(e)}>
-              <img src={this.iconExit()} />
-            </div>
-            <div class="item flash" onClick={e => this.handleFlashClick(e)}>
-              {this.flashModes.length > 0 && (
-              <div>
-                {this.flashMode == 'off' ? <img src={this.iconFlashOff()} /> : ''}
-                {this.flashMode == 'auto' ? <img src={this.iconFlashAuto()} /> : ''}
-                {this.flashMode == 'flash' ? <img src={this.iconFlashOn()} /> : ''}
-              </div>
-              )}
-            </div>
-          </section>
-        </div>
-
         {(this.hasCamera === false || !!this.deviceError) && (
           <div class="no-device">
             <h2>{this.noDevicesText}</h2>
@@ -444,40 +441,36 @@ export class CameraPWA {
             }} />
         </div>
         ) : (
-          <div class="camera-video">
-            {this.showShutterOverlay && (
-            <div class="shutter-overlay">
+          <div class="camera-image-wrapper">
+            <div class="photo-frame" ref={(el) => this.element= el}>
+              {this.emballageImage && <img src={this.emballageImage} />}
             </div>
-            )}
-            {this.hasImageCapture() ? (
-            <video
-              ref={(el: HTMLVideoElement) => this.videoElement = el}
-              onLoadedMetaData={this.handleVideoMetadata}
-              autoplay
-              playsinline />
-            ) : (
-            <canvas ref={(el: HTMLCanvasElement) => this.canvasElement = el} width="100%" height="100%"></canvas>
-            )}
-            <canvas class="offscreen-image-render" ref={e => this.offscreenCanvas = e} width="100%" height="100%" />
+            <div class="camera-video">
+              {this.showShutterOverlay && (
+              <div class="shutter-overlay">
+              </div>
+              )}
+              {this.hasImageCapture() ? (
+              <video
+                style={{height: this.cameraHeight + 'px'}}
+                ref={(el: HTMLVideoElement) => this.videoElement = el}
+                onLoadedMetaData={this.handleVideoMetadata}
+                autoplay
+                playsinline />
+              ) : (
+              <canvas ref={(el: HTMLCanvasElement) => this.canvasElement = el} width="100%" height="100%"></canvas>
+              )}
+              <canvas class="offscreen-image-render" ref={e => this.offscreenCanvas = e} width="100%" height="100%" />
+            </div>
           </div>
         )}
 
         {this.hasCamera && (
         <div class="camera-footer">
           {!this.photo ? ([
-          <div class="pick-image" onClick={this.handlePickFile}>
-            <label htmlFor="_pwa-elements-file-pick">
-              {this.iconPhotos()}
-            </label>
-            <input
-              type="file"
-              id="_pwa-elements-file-pick"
-              onChange={this.handleFileInputChange}
-              accept="image/*"
-              class="pick-image-button" />
-          </div>,
+         <div></div>,
           <div class="shutter" onClick={this.handleShutterClick}>
-            <div class="shutter-button"></div>
+            <img src={this.iconCapture()} />
           </div>,
           <div class="rotate" onClick={this.handleRotateClick}>
             <img src={this.iconReverseCamera()} />

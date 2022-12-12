@@ -1,4 +1,9 @@
 :host {
+  background-color: #e5b1d7;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  
   --header-height: 4em;
   --footer-height: 9em;
   --header-height-landscape: 3em;
@@ -12,7 +17,7 @@
   font-family: -apple-system, BlinkMacSystemFont,
     “Segoe UI”, “Roboto”, “Droid Sans”, “Helvetica Neue”, sans-serif;
 
-  display: block;
+  /*display: block;*/
   width: 100%;
   height: 100%;
 }
@@ -41,7 +46,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 92%;
+  padding-top: 10px;
   height: 100%;
 }
 
@@ -58,7 +64,9 @@
 .camera-footer {
   position: relative;
   color: white;
-  background-color: black;
+  
+  background-color: transparent;
+  z-index: 2;
   height: var(--footer-height);
 }
 
@@ -125,7 +133,7 @@ video {
   margin-top: calc(var(--shutter-size) / -2);
   margin-left: calc(var(--shutter-size) / -2);
   border-radius: 100%;
-  background-color: #c6cdd8;
+  /*background-color: #c6cdd8;*/
   padding: 12px;
   box-sizing: border-box;
 }
@@ -241,4 +249,26 @@ video {
   pointer-events: none;
   width: 100%;
   height: 100%;
+}
+
+/* custom */
+.camera-image-wrapper {
+
+  text-align: center;
+  justify-content: center;
+  align-items: flex-start;
+  display: flex;
+
+}
+.camera-image-wrapper .photo-frame {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+.camera-image-wrapper .photo-frame img {
+  width: 100%;
+}
+
+.camera-footer {
+  margin-top: 100px;
 }

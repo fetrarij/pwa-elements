@@ -29,10 +29,12 @@
     var b = document.querySelector('#camera-button');
     b.addEventListener('click', async (ev) => {
       const camera = document.createElement('pwa-camera-modal');
+      camera.emballageImage = 'https://storage.googleapis.com/print-your-friends.appspot.com/frame_0d680f0b9d.png'
 
       document.body.appendChild(camera);
 
       await camera.componentOnReady();
+      console.log('camera', camera)
 
       camera.addEventListener('noDeviceError', async (e) => {
         console.log('NO DEVICE', e);
